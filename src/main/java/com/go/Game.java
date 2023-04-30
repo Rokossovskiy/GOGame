@@ -1,23 +1,51 @@
 package com.go;
 
-public class Game {
-    private static final int sizeBoard = 13; // размер игрового поля
-    private static final double komi = 6.5; // Фора, то бишь количество компенсации белым
+import com.go.Stone.colorStone;
+
+interface IGame {
+    void newGame();
+    void changePauseState();
+    void saveGame();
+}
+
+interface IBoardController {
+    void initBoard();
+}
+
+public class Game implements IGame {
+    public static final int BOARD_SIZE = 13; // размер игрового поля
+    private static final double KOMI = 6.5; // Фора, то бишь количество компенсации белым
     private Board board; // Состояние доски
-    private Stone currentPlayer;
+    private colorStone currentPlayer;
+    private final IBoardController boardController;
 
     // Конструктор
-    public Game() {
-        board = new Board();
-        currentPlayer = Stone.Black;
+    public Game(IBoardController boardController) {
+        this.boardController = boardController;
+        board = new Board(BOARD_SIZE);
+        currentPlayer = colorStone.Black;
     }
 
     // Метод, который создает новую игру
-    private void newGame() {
-        Board board = new Board();
-        currentPlayer = Stone.Black;
+    public void newGame() {
+        board = new Board(BOARD_SIZE);
+        currentPlayer = colorStone.Black;
+    }
+
+    @Override
+    public void changePauseState() {
+
+    }
+
+    @Override
+    public void saveGame() {
+
     }
 
     private void saveGame(String fileName) {
+    }
+
+    private void move() {
+
     }
 }
