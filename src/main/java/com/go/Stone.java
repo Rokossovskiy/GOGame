@@ -7,8 +7,6 @@ public class Stone {
     private final int y;
     private final Color color;
 
-    public enum colorStone {White, Black}
-
     public Stone(Color color, int x, int y) {
         this.x = x;
         this.y = y;
@@ -26,5 +24,4 @@ public class Stone {
     public int getY() {
         return y;
     }
-
 }
