@@ -79,7 +79,7 @@ public class GameDisplay extends JPanel {
         int cellSize = Math.min((getWidth() - 30 * 2) / boardSize, (getHeight() - 30 * 2) / boardSize);
         int xIndent = 30 + (getWidth() - 30 * 2 - cellSize * boardSize) / 2;
         int yIndent = 30 + (getHeight() - 30 * 2 - cellSize * boardSize) / 2;
-        g.setColor(new Color(67, 74, 86));
+        g.setColor(new Color(78, 87, 101));
         for (int i = 0; i <= boardSize; i++) {
             g.drawLine(xIndent + i * cellSize, yIndent, xIndent + i * cellSize, getHeight() - yIndent);
             g.drawLine(xIndent, yIndent + i * cellSize, getWidth() - xIndent, yIndent + i * cellSize);
@@ -89,7 +89,9 @@ public class GameDisplay extends JPanel {
                 Stone stone = board.getPosition(i, j);
                 if (stone != null) {
                     g.setColor(stone.getColor());
-                    g.fillOval(xIndent + i * cellSize - cellSize / 2, yIndent + j * cellSize - cellSize / 2, cellSize, cellSize);
+                    int stoneSize = (int)(cellSize * 0.9); // размер камня
+                    g.fillOval(xIndent + i * cellSize - stoneSize / 2,
+                            yIndent + j * cellSize - stoneSize / 2, stoneSize, stoneSize);
                 }
             }
         }
@@ -111,10 +113,8 @@ public class GameDisplay extends JPanel {
                 int j = (int) ((float) (y - yIndent + cellSize / 2) / cellSize);
                 if (i >= 0 && i < BOARD_SIZE && j >= 0 && j < BOARD_SIZE) {
                     Stone stone = new Stone(game.getCurrentPlayer(), i, j);
-                    game.move();
+                    if (board.getPosition(i, j) == null) game.move();
                     board.addStone(stone);
-                    System.out.println(game.getCurrentPlayer());
-                    System.out.println(board.getPosition(i, j));
                     this.repaint(xIndent + i * cellSize - cellSize / 2, yIndent + j * cellSize - cellSize / 2, cellSize, cellSize);
                 }
             }

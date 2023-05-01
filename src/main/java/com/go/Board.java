@@ -21,7 +21,7 @@ public class Board implements IBoard {
         int x = stone.getX();
         int y = stone.getY();
         if (positions[x][y] != null)
-            JOptionPane.showMessageDialog(null, "Недопустимый ход!", "Опа!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Занято, не угадал!", "Опочки!", JOptionPane.ERROR_MESSAGE);
         else {
             positions[x][y] = stone;
         }
