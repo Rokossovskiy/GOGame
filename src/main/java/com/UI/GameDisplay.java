@@ -28,7 +28,10 @@ public class GameDisplay extends JPanel {
 
     // Создает окно по заданным параметрам, добавляет панель меню сверху
     public static void main(String[] args) {
-        //Game game = new Game();
+        // Создание игры
+        Game game = new Game();
+
+        // Создание фрейма
         JFrame frame = new JFrame("StrateGO");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         int width = 600;
@@ -40,35 +43,52 @@ public class GameDisplay extends JPanel {
         GameDisplay gameDisplay = new GameDisplay();
         frame.add(gameDisplay);
 
-        JMenuBar mb = new JMenuBar();
-        JMenu menu1 = new JMenu("Открыть");
-        JMenu menu2 = new JMenu("Сохранить");
-        JMenu menu3 = new JMenu("Новая игра");
-        mb.add(menu1);
-        mb.add(menu2);
-        mb.add(menu3);
-        //menu3.addActionListener(e -> {
-        //    game.newGame();
-        //    frame.getContentPane().repaint();
-        //});
-
-        JPanel grid = new JPanel(new GridLayout(1, 2, 5, 0));
-        JButton passButton = new JButton("Пасс");
-        JButton cancelButton = new JButton("Отмена");
-        grid.add(passButton);
-        grid.add(cancelButton);
-        JPanel flow = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        flow.add(grid);
-        Container container = frame.getContentPane();
-        container.add(flow, BorderLayout.SOUTH);
-        frame.setJMenuBar(mb);
-
-        // passButton.addActionListener(e -> );
-        // cancelButton.addActionListener(e -> board.removeStone());
+        // Создание панели кнопок
+        JPanel buttonPanel = createPanel(game, gameDisplay);
+        frame.getContentPane().add(buttonPanel, BorderLayout.NORTH);
 
         frame.pack();
         frame.setVisible(true);
-        gameDisplay.repaint();
+        gameDisplay.revalidate();
+    }
+
+    // Создание кнопок управления
+    private static JPanel createPanel(Game game, GameDisplay gameDisplay) {
+
+        JPanel grid = new JPanel(new GridLayout(2, 0, 2, 0));
+        grid.setBackground(new Color(226, 193, 144));
+
+        JButton newGame = new JButton("Новая игра");
+        JButton saveGame = new JButton("Сохранить игру");
+        JButton openGame = new JButton("Открыть игру");
+        JButton passButton = new JButton("Пасс");
+        JButton cancelButton = new JButton("Отменить ход");
+        JButton loveButton = new JButton("Разработчик топ");
+
+        //Создание функционала кнопок
+        newGame.addActionListener(e -> {
+            game.newGame();
+            gameDisplay.repaint();
+            System.out.println("Кнопка \"Новая игра\" работает.");
+        });
+
+        passButton.addActionListener(e -> {
+            game.move();
+            System.out.println("Кнопка \"Пасс\" работает");
+        });
+
+        grid.add(newGame);
+        grid.add(saveGame);
+        grid.add(openGame);
+        grid.add(passButton);
+        grid.add(cancelButton);
+        grid.add(loveButton);
+
+        JPanel flow = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        flow.add(grid);
+        flow.setBackground(new Color(226, 193, 144));
+
+        return flow;
     }
 
     //Рисует доску и потом камни
