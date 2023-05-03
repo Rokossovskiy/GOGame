@@ -1,7 +1,6 @@
 package com.go;
 
 import javax.swing.*;
-import java.util.Arrays;
 
 interface IBoard {
     void addStone(Stone stone);
@@ -11,15 +10,15 @@ interface IBoard {
 
 public class Board implements IBoard {
 
-    private final Stone[][] positions;
+    public Stone[][] positions;
 
     public Board(int boardSize) {
         positions = new Stone[boardSize][boardSize];
     }
 
     public void addStone(Stone stone) {
-        int x = stone.getX();
-        int y = stone.getY();
+        int x = stone.x();
+        int y = stone.y();
         if (positions[x][y] != null)
             JOptionPane.showMessageDialog(null, "Занято, не угадал!", "Опачки!", JOptionPane.ERROR_MESSAGE);
         else {
@@ -29,8 +28,8 @@ public class Board implements IBoard {
 
     @Override
     public void removeStone(Stone stone) {
-        int x = stone.getX();
-        int y = stone.getY();
+        int x = stone.x();
+        int y = stone.y();
         if (positions[x][y] == stone) {
             positions[x][y] = null;
         }
@@ -38,7 +37,8 @@ public class Board implements IBoard {
 
     @Override
     public void clear() {
-        Arrays.fill(positions, null);
+        positions = new Stone[13][13];
+        //Arrays.fill(positions, null);
     }
 
     public Stone getPosition(int x, int y) {
