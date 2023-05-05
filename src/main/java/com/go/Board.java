@@ -1,11 +1,10 @@
 package com.go;
 
-import javax.swing.*;
 
 interface IBoard {
     void addStone(Stone stone);
     void removeStone(Stone stone);
-    void clear();
+    void clearBoard();
 }
 
 public class Board implements IBoard {
@@ -19,11 +18,7 @@ public class Board implements IBoard {
     public void addStone(Stone stone) {
         int x = stone.x();
         int y = stone.y();
-        if (positions[x][y] != null)
-            JOptionPane.showMessageDialog(null, "Занято, не угадал!", "Опачки!", JOptionPane.ERROR_MESSAGE);
-        else {
-            positions[x][y] = stone;
-        }
+        positions[x][y] = stone;
     }
 
     @Override
@@ -36,14 +31,11 @@ public class Board implements IBoard {
     }
 
     @Override
-    public void clear() {
+    public void clearBoard() {
         positions = new Stone[13][13];
-        //Arrays.fill(positions, null);
     }
 
     public Stone getPosition(int x, int y) {
         return positions[x][y];
     }
-
-
 }

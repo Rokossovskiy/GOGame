@@ -7,6 +7,7 @@ class GameButtonsControlContainerPanel extends JPanel {
 
     public GameButtonsControlContainerPanel(LayoutManager layoutManager, JPanel content) {
         super(layoutManager);
+
         setBackground(DisplayConfig.BACKGROUND_COLOR);
 
         add(content);

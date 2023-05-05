@@ -1,7 +1,5 @@
 package com.UI;
 
-import com.go.Stone;
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -15,13 +13,13 @@ class GameButtonsControlPanel extends JPanel {
         void onSaveGameClick();
     }
 
-    //interface RemoveStoneListener {
-    //    void RemoveStoneListener();
-    //}
+    interface RemoveStoneListener {
+        void onRemoveStoneClick();
+    }
 
     private NewGameListener newGameListener;
     private SaveGameListener saveGameListener;
-    //private RemoveStoneListener removeStoneListener;
+    private RemoveStoneListener removeStoneListener;
 
     public GameButtonsControlPanel(LayoutManager layoutManager) {
         super(layoutManager);
@@ -47,11 +45,16 @@ class GameButtonsControlPanel extends JPanel {
             }
         });
 
-//        cancelButton.addActionListener( e -> {
-//            if (RemoveStoneListener != null) {
-//                RemoveStoneListener.onRemoveStoneClick(Stone );
-//            }
-//        });
+        cancelButton.addActionListener(e -> {
+            if (removeStoneListener != null) {
+                removeStoneListener.onRemoveStoneClick();
+                repaint();
+            }
+        });
+
+        passButton.addActionListener(e -> {
+
+        });
 
         add(newGame);
         add(saveGame);
@@ -65,15 +68,11 @@ class GameButtonsControlPanel extends JPanel {
         this.newGameListener = newGameListener;
     }
 
-    public void removeNewGameListener() {
-        this.newGameListener = null;
-    }
-
     public void addSaveGameListener(SaveGameListener saveGameListener) {
         this.saveGameListener = saveGameListener;
     }
 
-//    public void removeSaveGameListener() {
-//        this.removeStoneListener = null;
-//    }
+    public void addRemoveStoneListener(RemoveStoneListener removeStoneListener) {
+        this.removeStoneListener = removeStoneListener;
+    }
 }
