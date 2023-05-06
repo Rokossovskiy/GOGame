@@ -16,20 +16,33 @@ public class GameDisplay {
 
         // Создает фрейм
         JFrame frame = new JFrame("StrateGO");
+        JLabel background = new JLabel();
+        background.setIcon(new ImageIcon(new ImageIcon("fon.jpg").getImage()));
+        background.setLayout(new BorderLayout());
+
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setPreferredSize(DisplayConfig.WINDOW_SIZE);
         frame.setMinimumSize(DisplayConfig.MIN_WINDOW_SIZE);
 
+
+
         // Создает панель с кнопками
         GamePanel gamePanel = new GamePanel(board, game);
-        frame.getContentPane().add(gamePanel);
+        gamePanel.setOpaque(false);
+        background.add(gamePanel);
         GameButtonsControlPanel buttons = new GameButtonsControlPanel(new GridLayout(2, 3, 3, 0));
+        buttons.setOpaque(false);
         buttons.addNewGameListener(gamePanel);
         buttons.addRemoveStoneListener(new RemoveStoneListener(game, board, gamePanel));
         buttons.addSaveGameListener(new SaveGameListener(game));
+        buttons.addPassMoveListener(new PassMoveListener(game));
+        buttons.addLoveButtonListener(new LoveButtonListener());
 
         GameButtonsControlContainerPanel buttonsContainer = new GameButtonsControlContainerPanel(new FlowLayout(FlowLayout.CENTER), buttons);
-        frame.getContentPane().add(buttonsContainer, BorderLayout.NORTH);
+        buttonsContainer.setOpaque(false);
+        background.add(buttonsContainer, BorderLayout.NORTH);
+
+        frame.add(background);
 
         frame.pack(); // Устанавливает размеры фрейма в соответствии с размером содержимого
         frame.setVisible(true); // Делает фрейм видимым

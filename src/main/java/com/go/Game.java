@@ -16,7 +16,7 @@ interface IBoardController {
 }
 
 public class Game implements IGame {
-    private static final double KOMI = 6.5; // Фора, то бишь количество компенсации белым
+    //private static final double KOMI = 6.5; // Фора, то бишь количество компенсации белым
     private final Board board; // Состояние доски
     private Color currentPlayer;
     public Stone previousPlayer;
@@ -91,19 +91,20 @@ public class Game implements IGame {
             // в первых 2-х строках файла цифры задают размерность массива
             int rows = Integer.parseInt(br.readLine());
             int cols = Integer.parseInt(br.readLine());
-            savePositions = new Stone[rows][cols]; // создали массив, который вернем из метода
-            // магия
+            savePositions = new Stone[rows][cols];
             for (int i = 0; i < savePositions.length; i++) {
                 for (int j = 0; j < savePositions[i].length; j++) {
                     String line = br.readLine();
-                    if (line.equals("null")) {
-                        savePositions[i][j] = null;
-                    } else if (line.equals("java.awt.Color[r=0,g=0,b=0]")) {
-                        Stone stone = new Stone(Color.BLACK, i, j);
-                        savePositions[i][j] = stone;
-                    } else if (line.equals("java.awt.Color[r=255,g=255,b=255]")) {
-                        Stone stone = new Stone(Color.WHITE, i, j);
-                        savePositions[i][j] = stone;
+                    switch (line) {
+                        case "null" -> savePositions[i][j] = null;
+                        case "java.awt.Color[r=0,g=0,b=0]" -> {
+                            Stone stone = new Stone(Color.BLACK, i, j);
+                            savePositions[i][j] = stone;
+                        }
+                        case "java.awt.Color[r=255,g=255,b=255]" -> {
+                            Stone stone = new Stone(Color.WHITE, i, j);
+                            savePositions[i][j] = stone;
+                        }
                     }
                 }
             }
@@ -112,7 +113,6 @@ public class Game implements IGame {
             e.printStackTrace();
             savePositions = new Stone[13][13];
             return savePositions;
-
         }
     }
 }

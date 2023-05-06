@@ -16,15 +16,22 @@ class GameButtonsControlPanel extends JPanel {
     interface RemoveStoneListener {
         void onRemoveStoneClick();
     }
+    interface PassMoveListener {
+        void onPassMoveClick();
+    }
+
+    interface LoveButtonListener {
+        void onLoveButtonClick();
+    }
 
     private NewGameListener newGameListener;
     private SaveGameListener saveGameListener;
     private RemoveStoneListener removeStoneListener;
+    private PassMoveListener passMoveListener;
+    private LoveButtonListener loveButtonListener;
 
     public GameButtonsControlPanel(LayoutManager layoutManager) {
         super(layoutManager);
-        setBackground(DisplayConfig.BACKGROUND_COLOR);
-
         JButton newGame = new JButton("Новая игра");
         JButton saveGame = new JButton("Сохранить игру");
         JButton openGame = new JButton("Открыть игру");
@@ -53,7 +60,15 @@ class GameButtonsControlPanel extends JPanel {
         });
 
         passButton.addActionListener(e -> {
+            if (passMoveListener != null) {
+                passMoveListener.onPassMoveClick();
+            }
+        });
 
+        loveButton.addActionListener(e -> {
+            if (loveButtonListener != null) {
+                loveButtonListener.onLoveButtonClick();
+            }
         });
 
         add(newGame);
@@ -75,4 +90,17 @@ class GameButtonsControlPanel extends JPanel {
     public void addRemoveStoneListener(RemoveStoneListener removeStoneListener) {
         this.removeStoneListener = removeStoneListener;
     }
+
+    public void addPassMoveListener(PassMoveListener passMoveListener) {
+        this.passMoveListener = passMoveListener;
+    }
+
+    public void addLoveButtonListener(LoveButtonListener loveButtonListener) {
+        this.loveButtonListener = loveButtonListener;
+    }
 }
+
+// 1) как сделать панель под фон
+// 2) комментарии по коду
+// 3) про сохранение
+// 4)

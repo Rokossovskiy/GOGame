@@ -20,7 +20,6 @@ class GamePanel extends JPanel implements GameButtonsControlPanel.NewGameListene
         this.board = board;
         this.game = game;
 
-        setBackground(DisplayConfig.BACKGROUND_COLOR);
         enableEvents(AWTEvent.MOUSE_EVENT_MASK); //Считывает мышь
     }
 
@@ -34,8 +33,6 @@ class GamePanel extends JPanel implements GameButtonsControlPanel.NewGameListene
 
     // Отрисовка игрового поля
     private void drawBoard (Graphics g) {
-        Image backgroundImage = new ImageIcon("fon.jpg").getImage();
-        g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), null);
         int boardSize = BOARD_SIZE - 1;
         int cellSize = Math.min((getWidth() - 30 * 2) / boardSize, (getHeight() - 30 * 2) / boardSize);
         int xIndent = 30 + (getWidth() - 30 * 2 - cellSize * boardSize) / 2;
