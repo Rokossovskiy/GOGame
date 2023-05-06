@@ -37,7 +37,7 @@ public class GameDisplay {
         buttons.addSaveGameListener(new SaveGameListener(game));
         buttons.addPassMoveListener(new PassMoveListener(game));
         buttons.addLoveButtonListener(new LoveButtonListener());
-        buttons.addOpenGameListener(new OpenGameListener(game));
+        buttons.addOpenGameListener(new OpenGameListener(game, gamePanel));
 
         GameButtonsControlContainerPanel buttonsContainer = new GameButtonsControlContainerPanel(new FlowLayout(FlowLayout.CENTER), buttons);
         buttonsContainer.setOpaque(false);

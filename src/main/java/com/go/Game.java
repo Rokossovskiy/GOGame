@@ -1,8 +1,11 @@
 package com.go;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.*;
-import java.util.Objects;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 interface IGame {
     void newGame();
@@ -20,7 +23,6 @@ public class Game implements IGame {
     private final Board board; // Состояние доски
     private Color currentPlayer;
     public Stone previousPlayer;
-    private int numberOfGames = 0;
 
     // Конструктор
     public Game(Board board) {
@@ -36,83 +38,78 @@ public class Game implements IGame {
 
     @Override
     public void saveGame() {
-        saveArrayToFile(board.positions);
+        int numberOfGames = 0;
+        saveArrayToFile(board.positions, numberOfGames);
     }
 
     @Override
     public void returnGame() {
-        board.positions = loadArrayFromFile(numberOfGames);
+        board.positions = loadArrayFromFile();
     }
 
     @Override
     public void move() {
-        if (currentPlayer == Color.BLACK)
-            currentPlayer = Color.WHITE;
-        else
-            currentPlayer = Color.BLACK;
+        currentPlayer = (currentPlayer == Color.BLACK) ? Color.WHITE : Color.BLACK;
     }
 
     public Color getCurrentPlayer() {
         return currentPlayer;
     }
 
-    public Stone getPreviousPlayer () {
+    public Stone getPreviousPlayer() {
         return previousPlayer;
     }
 
-    private void saveArrayToFile(Stone[][] arr) {
+    private void saveArrayToFile(Stone[][] arr, int numberOfGames) {
         try {
-            numberOfGames++;
-            BufferedWriter bw = new BufferedWriter(new FileWriter("SaveGame " + numberOfGames));
-            bw.write(String.valueOf(arr.length));
-            bw.newLine();
-            bw.write(String.valueOf(arr[0].length));
-            bw.newLine();
+            StringBuilder sb = new StringBuilder();
+            sb.append(arr.length).append('\n');
+            sb.append(arr[0].length).append('\n');
             for (Stone[] stones : arr) {
                 for (int j = 0; j < arr[0].length; j++) {
-                    if (!Objects.equals(String.valueOf(stones[j]), "null"))
-                        bw.write(String.valueOf(stones[j].color()));
-                    else
-                        bw.write(String.valueOf(stones[j]));
-                    bw.newLine();
+                    if (stones[j] != null) {
+                        sb.append(stones[j].color().toString()).append('\n');
+                    } else {
+                        sb.append("null").append('\n');
+                    }
                 }
             }
-            bw.flush();
-            bw.close();
+            Files.writeString(Path.of(String.format("SaveGame %d", numberOfGames)),
+                    sb.toString(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private Stone[][] loadArrayFromFile(int numberOfGames) {
-        Stone[][] savePositions;
-        String fileName = "SaveGame" + numberOfGames;
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-            // в первых 2-х строках файла цифры задают размерность массива
+    //Считывает сохраненную игру из файла
+    private Stone[][] loadArrayFromFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        int result = fileChooser.showOpenDialog(null);
+        if (result != JFileChooser.APPROVE_OPTION) {
+            return new Stone[13][13];
+        }
+
+        File selectedFile = fileChooser.getSelectedFile();
+        try (BufferedReader br = new BufferedReader(new FileReader(selectedFile))) {
             int rows = Integer.parseInt(br.readLine());
             int cols = Integer.parseInt(br.readLine());
-            savePositions = new Stone[rows][cols];
-            for (int i = 0; i < savePositions.length; i++) {
-                for (int j = 0; j < savePositions[i].length; j++) {
-                    String line = br.readLine();
-                    switch (line) {
-                        case "null" -> savePositions[i][j] = null;
-                        case "java.awt.Color[r=0,g=0,b=0]" -> {
-                            Stone stone = new Stone(Color.BLACK, i, j);
-                            savePositions[i][j] = stone;
-                        }
-                        case "java.awt.Color[r=255,g=255,b=255]" -> {
-                            Stone stone = new Stone(Color.WHITE, i, j);
-                            savePositions[i][j] = stone;
-                        }
+            Stone[][] savePositions = new Stone[rows][cols];
+            for (int i = 0; i < rows; i++) {
+                String[] cells = br.readLine().split(" ");
+                for (int j = 0; j < cols; j++) {
+                    String cell = cells[j];
+                    if (cell.equals("null")) {
+                        savePositions[i][j] = null;
+                    } else {
+                        Color color = Color.decode(cell);
+                        savePositions[i][j] = new Stone(color, i, j);
                     }
                 }
             }
             return savePositions;
         } catch (IOException e) {
             e.printStackTrace();
-            savePositions = new Stone[13][13];
-            return savePositions;
+            return new Stone[13][13];
         }
     }
 }
