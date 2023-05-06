@@ -24,11 +24,16 @@ class GameButtonsControlPanel extends JPanel {
         void onLoveButtonClick();
     }
 
+    interface OpenGameListener {
+        void onOpenGameClick();
+    }
+
     private NewGameListener newGameListener;
     private SaveGameListener saveGameListener;
     private RemoveStoneListener removeStoneListener;
     private PassMoveListener passMoveListener;
     private LoveButtonListener loveButtonListener;
+    private OpenGameListener openGameListener;
 
     public GameButtonsControlPanel(LayoutManager layoutManager) {
         super(layoutManager);
@@ -41,34 +46,33 @@ class GameButtonsControlPanel extends JPanel {
 
 
         newGame.addActionListener(e -> {
-            if (newGameListener != null) {
+            if (newGameListener != null)
                 newGameListener.onNewGameClick();
-            }
         });
 
         saveGame.addActionListener(e -> {
-            if (saveGameListener != null) {
+            if (saveGameListener != null)
                 saveGameListener.onSaveGameClick();
-            }
         });
 
         cancelButton.addActionListener(e -> {
-            if (removeStoneListener != null) {
+            if (removeStoneListener != null)
                 removeStoneListener.onRemoveStoneClick();
-                repaint();
-            }
         });
 
         passButton.addActionListener(e -> {
-            if (passMoveListener != null) {
+            if (passMoveListener != null)
                 passMoveListener.onPassMoveClick();
-            }
         });
 
         loveButton.addActionListener(e -> {
-            if (loveButtonListener != null) {
+            if (loveButtonListener != null)
                 loveButtonListener.onLoveButtonClick();
-            }
+        });
+
+        openGame.addActionListener(e -> {
+            if (openGameListener != null)
+                openGameListener.onOpenGameClick();
         });
 
         add(newGame);
@@ -97,6 +101,10 @@ class GameButtonsControlPanel extends JPanel {
 
     public void addLoveButtonListener(LoveButtonListener loveButtonListener) {
         this.loveButtonListener = loveButtonListener;
+    }
+
+    public void addOpenGameListener(OpenGameListener openGameListener) {
+        this.openGameListener = openGameListener;
     }
 }
 
