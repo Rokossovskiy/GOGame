@@ -107,8 +107,3 @@ class GameButtonsControlPanel extends JPanel {
         this.openGameListener = openGameListener;
     }
 }
-
-// 1) как сделать панель под фон
-// 2) комментарии по коду
-// 3) про сохранение
-// 4)

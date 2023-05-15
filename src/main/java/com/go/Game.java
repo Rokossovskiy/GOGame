@@ -31,17 +31,20 @@ public class Game implements IGame {
     }
 
     // Метод, который создает новую игру
+    @Override
     public void newGame() {
         board.clearBoard();
         currentPlayer = Color.BLACK;
     }
 
+    // Метод, который сохраняет игру
     @Override
     public void saveGame() {
         int numberOfGames = 0;
         saveArrayToFile(board.positions, numberOfGames);
     }
 
+    // Метод, который возвращает сохраненную игру
     @Override
     public void returnGame() {
         board.positions = loadArrayFromFile();
@@ -60,6 +63,7 @@ public class Game implements IGame {
         return previousPlayer;
     }
 
+    // Метод, который сохраняет игру в файл
     private void saveArrayToFile(Stone[][] arr, int numberOfGames) {
         try {
             StringBuilder sb = new StringBuilder();
