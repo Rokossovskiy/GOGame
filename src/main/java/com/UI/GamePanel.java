@@ -10,7 +10,8 @@ import java.awt.event.MouseEvent;
 
 class GamePanel extends JPanel implements GameButtonsControlPanel.NewGameListener {
 
-    private final static int BOARD_SIZE = 13;
+    private final static int SCALE_FACTOR = 30;
+    private final static double STONE_SCALE_FACTOR = 0.9;
 
     private final Board board;
     private final Game game;
@@ -19,7 +20,6 @@ class GamePanel extends JPanel implements GameButtonsControlPanel.NewGameListene
 
         this.board = board;
         this.game = game;
-
         enableEvents(AWTEvent.MOUSE_EVENT_MASK); //Считывает мышь
     }
 
@@ -32,11 +32,11 @@ class GamePanel extends JPanel implements GameButtonsControlPanel.NewGameListene
     }
 
     // Отрисовка игрового поля
-    private void drawBoard (Graphics g) {
-        int boardSize = BOARD_SIZE - 1;
-        int cellSize = Math.min((getWidth() - 30 * 2) / boardSize, (getHeight() - 30 * 2) / boardSize);
-        int xIndent = 30 + (getWidth() - 30 * 2 - cellSize * boardSize) / 2;
-        int yIndent = 30 + (getHeight() - 30 * 2 - cellSize * boardSize) / 2;
+    private void drawBoard(Graphics g) {
+        int boardSize = game.getBoardSize() - 1;
+        int cellSize = Math.min((getWidth() - SCALE_FACTOR * 2) / boardSize, (getHeight() - SCALE_FACTOR * 2) / boardSize);
+        int xIndent = SCALE_FACTOR + (getWidth() - SCALE_FACTOR * 2 - cellSize * boardSize) / 2;
+        int yIndent = SCALE_FACTOR + (getHeight() - SCALE_FACTOR * 2 - cellSize * boardSize) / 2;
         g.setColor(DisplayConfig.GRID_COLOR);
         for (int i = 0; i <= boardSize; i++) {
             g.drawLine(xIndent + i * cellSize, yIndent, xIndent + i * cellSize, getHeight() - yIndent);
@@ -44,54 +44,70 @@ class GamePanel extends JPanel implements GameButtonsControlPanel.NewGameListene
         }
     }
 
+    private int getCellSize() {
+        int boardSize = game.getBoardSize();
+        int widthSize = (getWidth() - SCALE_FACTOR * 2) / (boardSize - 1);
+        int heightSize = (getHeight() - SCALE_FACTOR * 2) / (boardSize - 1);
+        return Math.min(widthSize, heightSize);
+    }
+
+    private int getIndent(int measureSize) {
+        int boardSize = game.getBoardSize();
+        return SCALE_FACTOR + (measureSize - SCALE_FACTOR * 2 - getCellSize() * (boardSize - 1)) / 2;
+    }
+
+    private int getStoneSize() {
+        return (int) (getCellSize() * STONE_SCALE_FACTOR);
+    }
+
+    private int getStoneCordByIndent(int indent, int cord) {
+        return indent + cord * getCellSize() - getStoneSize() / 2;
+    }
+
     // Отрисовка камней
-    private void drawStones (Graphics g) {
-        int boardSize = BOARD_SIZE;
-        int cellSize = Math.min((getWidth() - 30 * 2) / (boardSize - 1), (getHeight() - 30 * 2) / (boardSize - 1));
-        int xIndent = 30 + (getWidth() - 30 * 2 - cellSize * (boardSize - 1)) / 2;
-        int yIndent = 30 + (getHeight() - 30 * 2 - cellSize * (boardSize - 1)) / 2;
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            for (int j = 0; j < BOARD_SIZE; j++) {
-                Stone stone = board.getPosition(i, j);
+    private void drawStones(Graphics g) {
+        int xIndent = getIndent(getWidth());
+        int yIndent = getIndent(getHeight());
+
+        final Stone[][] boardContent = game.getBoardContent(board);
+        for (Stone[] stones : boardContent) {
+            for (Stone stone : stones) {
                 if (stone != null) {
                     g.setColor(stone.color());
-                    int stoneSize = (int) (cellSize * 0.9); // Размер камня
-                    g.fillOval(xIndent + i * cellSize - stoneSize / 2,
-                            yIndent + j * cellSize - stoneSize / 2, stoneSize, stoneSize);
+                    g.fillOval(getStoneCordByIndent(xIndent, stone.x()),
+                            getStoneCordByIndent(yIndent, stone.y()), getStoneSize(), getStoneSize());
                 }
             }
         }
+    }
+
+    private int mouseCordToStoneCord(int cord, int indent) {
+        return (cord - indent + getCellSize() / 2) / getCellSize();
+    }
+
+    private void showErrorMessageDialog(String title, String message) {
+        JOptionPane.showMessageDialog(null, message, title,
+                JOptionPane.ERROR_MESSAGE);
     }
 
     // Считывает клики мыши и добавляет камень в массив
     @Override
     protected void processMouseEvent(MouseEvent mouseEvent) {
         super.processMouseEvent(mouseEvent);
-        if (mouseEvent.getID() == MouseEvent.MOUSE_PRESSED) {
+        if (mouseEvent.getID() == MouseEvent.MOUSE_PRESSED && mouseEvent.getButton() == MouseEvent.BUTTON1) {
 
-            //определение координат клика
-            int boardSize = BOARD_SIZE - 1;
-            int cellSize = Math.min((getWidth() - 30 * 2) / boardSize, (getHeight() - 30 * 2) / boardSize);
-            int xIndent = 30 + (getWidth() - 30 * 2 - cellSize * boardSize) / 2;
-            int yIndent = 30 + (getHeight() - 30 * 2 - cellSize * boardSize) / 2;
-            if (mouseEvent.getButton() == MouseEvent.BUTTON1) {
-                int x = mouseEvent.getX();
-                int y = mouseEvent.getY();
-                int i = (int) ((float) (x - xIndent + cellSize / 2) / cellSize);
-                int j = (int) ((float) (y - yIndent + cellSize / 2) / cellSize);
-                if (i >= 0 && i < BOARD_SIZE && j >= 0 && j < BOARD_SIZE) {
+            int x = mouseCordToStoneCord(mouseEvent.getX(), getIndent(getWidth()));
+            int y = mouseCordToStoneCord(mouseEvent.getY(), getIndent(getHeight()));
 
-                    // Добавление камня в массив и его отрисовка на игровой доске
-                    Stone stone = new Stone(game.getCurrentPlayer(), i, j);
-                    if (board.getPosition(i, j) == null) game.move();
-                    if (board.positions[i][j] != null)
-                        JOptionPane.showMessageDialog(null, "Занято, не угадал!", "Опачки!", JOptionPane.ERROR_MESSAGE);
-                    else {
-                        board.addStone(stone);
-                        game.previousPlayer = stone;
-                    }
-                    this.repaint(xIndent + i * cellSize - cellSize / 2, yIndent + j * cellSize - cellSize / 2, cellSize, cellSize);
+            if (x >= 0 && x < game.getBoardSize() && y >= 0 && y < game.getBoardSize()) {
+
+                boolean isStoneAdd = game.addStoneByCords(x, y);
+
+                if (!isStoneAdd) {
+                    showErrorMessageDialog("Опачки!", "Не угадал!");
                 }
+
+                repaint();
             }
         }
     }
